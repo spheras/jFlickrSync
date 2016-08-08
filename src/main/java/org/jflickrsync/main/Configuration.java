@@ -17,9 +17,11 @@ public class Configuration
 
     public static final String USER_HOME = "user.home";
 
+    private static String configFolder = null;
+
     private static final String PROPERTIES_COMMENTS = "jfilesync configuration";
 
-    private static final String CONFIG_FILE_NAME = "config.properties";
+    public static final String CONFIG_FILE_NAME = "config.properties";
 
     private static final String CONFIG_FILE_CLASSPATH = "/org/flickrsync/main/config.properties";
 
@@ -286,10 +288,18 @@ public class Configuration
      * 
      * @return
      */
-    public static String getConfigurationUserHomeFolder()
+    public static String getConfigurationFolderAbsolutePath()
     {
-        String userHomeConfigFolder = System.getProperty( USER_HOME ) + File.separatorChar + CONFIG_FOLDER_NAME;
-        return userHomeConfigFolder;
+        if ( Configuration.configFolder == null )
+        {
+            String userHomeConfigFolder = System.getProperty( USER_HOME ) + File.separatorChar + CONFIG_FOLDER_NAME;
+            return userHomeConfigFolder;
+        }
+        else
+        {
+            String userHomeConfigFolder = Configuration.configFolder;
+            return userHomeConfigFolder;
+        }
     }
 
     /**
@@ -297,11 +307,26 @@ public class Configuration
      * 
      * @return
      */
-    public static String getConfigurationFilePath()
+    public static String getConfigurationFileAbsolutePath()
     {
-        String userHomeConfigFolder = getConfigurationUserHomeFolder();
-        String userHomeConfigFile = CONFIG_FILE_NAME;
-        return userHomeConfigFolder + File.separatorChar + userHomeConfigFile;
+        String configFolder = getConfigurationFolderAbsolutePath();
+        return configFolder + File.separatorChar + CONFIG_FILE_NAME;
+    }
+
+    /**
+     * Obtain the configuration. This configuration is stored at the user home directory /.jflickrsync/config.properties
+     * 
+     * @return {@link Properties}
+     * @throws IOException
+     */
+    public static Properties getConfiguration( String configurationFolder )
+        throws IOException
+    {
+        if ( configuration == null )
+        {
+            Configuration.configFolder = configurationFolder;
+        }
+        return getConfiguration();
     }
 
     /**
@@ -315,10 +340,10 @@ public class Configuration
     {
         if ( configuration == null )
         {
-            String userHomeConfigFolder = getConfigurationUserHomeFolder();
+            String configurationFilePath = getConfigurationFileAbsolutePath();
 
-            File fUserHomeConfigFile = new File( getConfigurationFilePath() );
-            if ( !fUserHomeConfigFile.exists() || !fUserHomeConfigFile.isFile() )
+            File fconfigFile = new File( configurationFilePath );
+            if ( !fconfigFile.exists() || !fconfigFile.isFile() )
             {
                 // we need to load the default configuration
                 InputStream in = null;
@@ -334,9 +359,9 @@ public class Configuration
                 }
 
                 // we store the basic config into the user home directory
-                File fUserHomeConfigFolder = new File( userHomeConfigFolder );
-                fUserHomeConfigFolder.mkdirs();
-                FileOutputStream fos = new FileOutputStream( fUserHomeConfigFile );
+                File fconfigFolder = new File( getConfigurationFolderAbsolutePath() );
+                fconfigFolder.mkdirs();
+                FileOutputStream fos = new FileOutputStream( fconfigFile );
                 try
                 {
                     configuration.store( fos, PROPERTIES_COMMENTS );
@@ -350,7 +375,7 @@ public class Configuration
             {
                 // the configuration at user home directory exists, lets load that
                 configuration = new Properties();
-                FileInputStream fis = new FileInputStream( fUserHomeConfigFile );
+                FileInputStream fis = new FileInputStream( fconfigFile );
                 try
                 {
                     configuration.load( fis );
@@ -362,6 +387,7 @@ public class Configuration
             }
 
         }
+
         return configuration;
     }
 
@@ -370,6 +396,8 @@ public class Configuration
      * 
      * @param accessToken {@link String} token obtained
      * @param tokenSecret {@link String} token secret obtained
+     * @param nsid {@link String} nsid of the user
+     * @param username {@link String} username
      * @throws IOException
      */
     public static void saveToken( String accessToken, String tokenSecret, String nsid, String username )
@@ -380,9 +408,7 @@ public class Configuration
         getConfiguration().put( CONFIG_NSID, nsid );
         getConfiguration().put( CONFIG_USERNAME, username );
 
-        String userHomeConfigFolder = System.getProperty( USER_HOME ) + File.separatorChar + CONFIG_FOLDER_NAME;
-        String userHomeConfigFile = CONFIG_FILE_NAME;
-        File fUserHomeConfigFile = new File( userHomeConfigFolder + File.separatorChar + userHomeConfigFile );
+        File fUserHomeConfigFile = new File( getConfigurationFileAbsolutePath() );
         FileOutputStream fos = new FileOutputStream( fUserHomeConfigFile );
         try
         {

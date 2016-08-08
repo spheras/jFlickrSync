@@ -2,7 +2,6 @@ package org.jflickrsync.main.flickr;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
@@ -23,44 +22,62 @@ import com.flickr4java.flickr.prefs.PrefsInterface;
 import com.flickr4java.flickr.util.AuthStore;
 import com.flickr4java.flickr.util.FileAuthStore;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class Authorization
 {
     private static final Logger logger = Logger.getLogger( Authorization.class );
 
     private static final String FLICKR_AUTH_FILE = ".flickrAuth";
 
+    @Setter
+    @Getter
     private Flickr flickr;
 
+    @Getter
+    @Setter
     private AuthStore authStore;
 
+    /**
+     * Constructor
+     */
+    public Authorization()
+    {
+        String sharedsecret = Configuration.getSharedSecret();
+        String apikey = Configuration.getAPIKey();
+        setFlickr( new Flickr( apikey, sharedsecret, new REST() ) );
+        Flickr.debugRequest = false;
+        Flickr.debugStream = false;
+    }
+
+    /**
+     * Try to authorize the app to get user info
+     * 
+     * @return {@link Flickr} object created
+     * @throws IOException
+     * @throws FlickrException
+     * @throws SAXException
+     */
     public Flickr authorize()
         throws IOException, FlickrException, SAXException
     {
-        Properties conf = Configuration.getConfiguration();
-        String sharedsecret = conf.getProperty( Configuration.CONFIG_SHAREDSECRET );
-        String apikey = conf.getProperty( Configuration.CONFIG_APIKEY );
-        String stoken = conf.getProperty( Configuration.CONFIG_ACCESSTOKEN, "" );
-        String authsDirStr = System.getProperty( Configuration.USER_HOME ) + File.separatorChar
-            + Configuration.CONFIG_FOLDER_NAME + File.separatorChar + FLICKR_AUTH_FILE;
+        String accessToken = Configuration.getAccessToken();
+        String authsDirStr = Configuration.getConfigurationFolderAbsolutePath() + File.separatorChar + FLICKR_AUTH_FILE;
 
-        this.flickr = new Flickr( apikey, sharedsecret, new REST() );
-        this.authStore = new FileAuthStore( new File( authsDirStr ) );
+        setAuthStore( new FileAuthStore( new File( authsDirStr ) ) );
 
-        if ( stoken == null || stoken.isEmpty() )
+        if ( accessToken == null || accessToken.isEmpty() )
         {
             authorizeApp();
         }
 
-        setAuth( Configuration.getAccessToken(), Configuration.getUsername(), Configuration.getTokenSecret(),
-                 Configuration.getNSid() );
+        setAuth( accessToken, Configuration.getUsername(), Configuration.getTokenSecret(), Configuration.getNSid() );
 
-        Flickr.debugRequest = false;
-        Flickr.debugStream = false;
-        
-        return flickr;
+        return getFlickr();
     }
 
-    public void setAuth( String accessToken, String username, String tokenSecret, String nsid )
+    private void setAuth( String accessToken, String username, String tokenSecret, String nsid )
         throws IOException, SAXException, FlickrException
     {
         RequestContext rc = RequestContext.getRequestContext();
@@ -73,9 +90,9 @@ public class Authorization
         }
         else
         {
-            if ( this.authStore != null )
+            if ( getAuthStore() != null )
             {
-                auth = this.authStore.retrieve( nsid );
+                auth = getAuthStore().retrieve( nsid );
                 if ( auth == null )
                 {
                     this.authorizeApp();
@@ -99,7 +116,7 @@ public class Authorization
     {
         // we need to allow this application for this user
         Flickr.debugStream = false;
-        AuthInterface authInterface = flickr.getAuthInterface();
+        AuthInterface authInterface = getFlickr().getAuthInterface();
         Scanner scanner = new Scanner( System.in );
         Token token = authInterface.getRequestToken();
 
@@ -118,7 +135,7 @@ public class Authorization
         logger.info( "Authentication success" );
 
         Auth auth = authInterface.checkToken( requestToken );
-        this.authStore.store( auth );
+        getAuthStore().store( auth );
 
         // we save the token secret for the next time
         Configuration.saveToken( requestToken.getToken(), requestToken.getSecret(), auth.getUser().getId(),
@@ -160,28 +177,8 @@ public class Authorization
         user.setUsername( ( username ) );
         user.setRealName( "" );
         auth.setUser( user );
-        this.authStore.store( auth );
+        getAuthStore().store( auth );
         return auth;
-    }
-
-    public Flickr getFlickr()
-    {
-        return flickr;
-    }
-
-    public void setFlickr( Flickr flickr )
-    {
-        this.flickr = flickr;
-    }
-
-    public AuthStore getAuthStore()
-    {
-        return authStore;
-    }
-
-    public void setAuthStore( AuthStore authStore )
-    {
-        this.authStore = authStore;
     }
 
     public boolean canUpload()
@@ -210,7 +207,7 @@ public class Authorization
     public int getPrivacy()
         throws Exception
     {
-        PrefsInterface prefi = flickr.getPrefsInterface();
+        PrefsInterface prefi = getFlickr().getPrefsInterface();
         return prefi.getPrivacy();
     }
 }

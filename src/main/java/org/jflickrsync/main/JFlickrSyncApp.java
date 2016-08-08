@@ -93,11 +93,11 @@ public class JFlickrSyncApp
             || !localDBIndex.getPath().equals( Configuration.getBasePath() ) )
         {
             System.out.println();
-            System.out.println( "It seems that this is the first time you execute jFlickrSyc. All the photos at flickR will be downloaded to the following path:" );
+            System.out.println( "It seems that this is the first time you execute jFlickrSync. All the photos at flickR will be downloaded to the following path:" );
             System.out.println( Configuration.getBasePath() );
             System.out.println( "And, if this local base path contains photos that doesn't exist at flickr server, them will be uploaded!" );
             System.out.println( "Remember: The configuration base path to download can be changed at "
-                + Configuration.getConfigurationFilePath() );
+                + Configuration.getConfigurationFileAbsolutePath() );
             Scanner scanner = new Scanner( System.in );
             String response = "";
             do

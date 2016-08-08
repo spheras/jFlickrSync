@@ -297,7 +297,7 @@ public class Index
         Gson gson = builder.excludeFieldsWithoutExposeAnnotation().create();
 
         String json = gson.toJson( this );
-        File file = new File( Configuration.getConfigurationUserHomeFolder() + File.separatorChar + indexFileName );
+        File file = new File( Configuration.getConfigurationFolderAbsolutePath() + File.separatorChar + indexFileName );
         if ( file.exists() )
         {
             file.delete();
@@ -316,7 +316,7 @@ public class Index
     public static Index load( String filenameIndex )
         throws IOException
     {
-        File f = new File( Configuration.getConfigurationUserHomeFolder() + File.separatorChar + filenameIndex );
+        File f = new File( Configuration.getConfigurationFolderAbsolutePath() + File.separatorChar + filenameIndex );
         if ( f.exists() )
         {
             GsonBuilder builder = new GsonBuilder();
