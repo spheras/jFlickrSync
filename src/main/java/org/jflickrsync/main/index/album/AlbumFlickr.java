@@ -46,7 +46,7 @@ public class AlbumFlickr
             falbum.mkdirs();
             for ( int i = 0; i < getPhotos().size(); i++ )
             {
-                File fphoto = ( (PhotoFlickr) getPhotos().get( i ) ).downloadFromFlickR();
+                ( (PhotoFlickr) getPhotos().get( i ) ).downloadFromFlickR();
             }
             return falbum;
         }
