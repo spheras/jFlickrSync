@@ -91,8 +91,8 @@ public class PhotoFlickr
             String filename = getFilename();
             BufferedInputStream inStream =
                 new BufferedInputStream( photoInt.getImageAsStream( flickrPhoto, Size.LARGE ) );
-            String destinationFolder = ( this.getAlbum() != null ? this.getAlbum().getAbsolutePathFile().getAbsolutePath()
-                            : Configuration.getBasePath() );
+            String destinationFolder = ( this.getAlbum() != null
+                            ? this.getAlbum().getAbsolutePathFile().getAbsolutePath() : Configuration.getBasePath() );
             File newFile = new File( destinationFolder, filename );
 
             FileOutputStream fos = new FileOutputStream( newFile );

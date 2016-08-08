@@ -3,6 +3,7 @@ package org.jflickrsync.main.flickr;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import org.jflickrsync.main.Configuration;
 import org.junit.Assert;
@@ -34,7 +35,10 @@ public class AuthorizationTest
         throws IOException
     {
         configFolder = folder.newFolder( "configuration" );
-        Configuration.getConfiguration( configFolder.getAbsolutePath() );
+        Properties props = Configuration.getConfiguration( configFolder.getAbsolutePath() );
+        props.setProperty( Configuration.CONFIG_ACCESSTOKEN, "" );
+        File f = new File( Configuration.getConfigurationFolderAbsolutePath() );
+        f.mkdirs();
     }
 
     @Test

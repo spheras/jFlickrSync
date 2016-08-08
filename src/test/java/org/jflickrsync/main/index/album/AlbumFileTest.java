@@ -42,6 +42,7 @@ public class AlbumFileTest
         baseFolder = folder.newFolder( "base" );
         Configuration.getConfiguration( configFolder.getAbsolutePath() );
         Configuration.getConfiguration().put( Configuration.CONFIG_BASEPATH, baseFolder.getAbsolutePath() );
+        Configuration.setBasePath( baseFolder.getAbsolutePath() );
     }
 
     @Test

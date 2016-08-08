@@ -111,6 +111,16 @@ public class Configuration
     /** local photos path, after the calculation of variables */
     private static String sBasePath = null;
 
+    /**
+     * Set the base path... (this way it is not calculated based on configuration)
+     * 
+     * @param basePath
+     */
+    public static void setBasePath( String basePath )
+    {
+        sBasePath = basePath;
+    }
+
     public static String getBasePath()
     {
         try
