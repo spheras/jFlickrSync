@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jflickrsync.main.Configuration;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import org.xml.sax.SAXException;
 
 import com.flickr4java.flickr.Flickr;
 import com.flickr4java.flickr.FlickrException;
+import com.flickr4java.flickr.RequestContext;
 import com.flickr4java.flickr.auth.Auth;
 import com.flickr4java.flickr.auth.AuthInterface;
 import com.flickr4java.flickr.auth.Permission;
@@ -52,22 +54,35 @@ public class AuthorizationTest
         user.setDescription( "miuser" );
         user.setRealName( "user test realname" );
         user.setId( "idtest" );
-        Mockito.when( authInt.checkToken( Mockito.any( Token.class ) ) ).thenReturn( new Auth( Permission.READ,
-                                                                                               user ) );
+        Auth mockAuth = new Auth( Permission.WRITE, user );
+        mockAuth.setToken( "mocktoken" );
+        mockAuth.setTokenSecret( "mockSecret" );
+        Mockito.when( authInt.checkToken( Mockito.any( Token.class ) ) ).thenReturn( mockAuth );
         Flickr flickr = Mockito.mock( Flickr.class );
         Mockito.when( flickr.getAuthInterface() ).thenReturn( authInt );
 
-        Authorization auth = new Authorization();
-        auth.setFlickr( flickr );
+        Authorization authorization = new Authorization();
+        authorization.setFlickr( flickr );
 
         ByteArrayInputStream in = new ByteArrayInputStream( "12345\n".getBytes() );
         System.setIn( in );
 
-        auth.authorize();
+        authorization.authorize();
 
         // optionally, reset System.in to its original
         System.setIn( System.in );
 
+        Assert.assertEquals( Configuration.getAccessToken(), "mytoken" );
+        Assert.assertEquals( Configuration.getTokenSecret(), "mysecret" );
+        Assert.assertEquals( Configuration.getNSid(), "idtest" );
+        Assert.assertEquals( Configuration.getUsername(), "username" );
+
+        RequestContext rc = RequestContext.getRequestContext();
+        Auth auth = rc.getAuth();
+        Assert.assertEquals( auth.getPermission(), Permission.WRITE );
+        Assert.assertEquals( auth.getTokenSecret(), "mockSecret" );
+        Assert.assertEquals( auth.getUser(), user );
+        Assert.assertEquals( auth.getToken(), "mocktoken" );
     }
 
 }

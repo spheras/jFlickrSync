@@ -67,12 +67,23 @@ public abstract class Album
         return title.hashCode();
     }
 
-    public File getLocalPathAlbum()
+    /**
+     * Get the local path of the album
+     * 
+     * @return
+     */
+    public File getAbsolutePathFile()
     {
         File falbum = new File( Configuration.getBasePath() + File.separatorChar + getTitle() );
         return falbum;
     }
 
+    /**
+     * Add a photo to the list of photos of this album
+     * 
+     * @param photo {@link Photo} photo to add
+     * @throws Exception
+     */
     public synchronized void addPhoto( Photo photo )
         throws Exception
     {

@@ -42,7 +42,7 @@ public class AlbumFlickr
         logger.info( "Downloading set:" + getTitle() );
         if ( flickrSet != null )
         {
-            File falbum = getLocalPathAlbum();
+            File falbum = getAbsolutePathFile();
             falbum.mkdirs();
             for ( int i = 0; i < getPhotos().size(); i++ )
             {

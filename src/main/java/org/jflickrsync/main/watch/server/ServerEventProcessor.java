@@ -188,7 +188,7 @@ public class ServerEventProcessor
 
                 }
 
-                File falbum = localAlbum.getLocalPathAlbum();
+                File falbum = localAlbum.getAbsolutePathFile();
                 this.localWatcher.addByPassDeleteEvent( falbum );
 
                 this.localCurrentIndex.albums_remove( indexLocal );
