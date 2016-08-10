@@ -12,9 +12,9 @@ public class UploadFilenameFilter
 
     // Following suffixes from flickr upload page. An App should have this configurable,
     // for videos and photos separately.
-    private static final String[] photoSuffixes = { "jpg", "jpeg", "png", "gif", "bmp", "tif", "tiff" };
+    public static final String[] photoSuffixes = { "jpg", "jpeg", "png", "gif", "bmp", "tif", "tiff" };
 
-    private static final String[] videoSuffixes =
+    public static final String[] videoSuffixes =
         { "3gp", "3gp", "avi", "mov", "mp4", "mpg", "mpeg", "wmv", "ogg", "ogv", "m2v" };
 
     @Override
