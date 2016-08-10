@@ -38,6 +38,7 @@ public class AlbumFileTest
     public static void setup()
         throws IOException
     {
+        Configuration.resetConfiguration();
         configFolder = folder.newFolder( "configuration" );
         baseFolder = folder.newFolder( "base" );
         Configuration.getConfiguration( configFolder.getAbsolutePath() );

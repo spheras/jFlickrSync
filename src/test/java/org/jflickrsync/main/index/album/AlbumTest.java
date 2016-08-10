@@ -6,6 +6,7 @@ import org.jflickrsync.main.Configuration;
 import org.jflickrsync.main.index.photo.Photo;
 import org.jflickrsync.main.index.photo.PhotoMock;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import junit.framework.Assert;
 
@@ -96,5 +97,20 @@ public class AlbumTest
         File f = album1.getAbsolutePathFile();
         Assert.assertEquals( f.getAbsolutePath(),
                              Configuration.getBasePath() + File.separatorChar + album1.getTitle() );
+    }
+
+    @Test
+    public void testChange()
+        throws Exception
+    {
+        AlbumListener listener = Mockito.mock( AlbumListener.class );
+        Album album = new AlbumMock( "test1" );
+        album.setListener( listener );
+        PhotoMock photo1 = new PhotoMock( "mock1" );
+        album.addPhoto( photo1 );
+        PhotoMock photo2 = new PhotoMock( "mock2" );
+        album.addPhoto( photo2 );
+
+        Mockito.verify( listener, Mockito.times( 2 ) ).albumChange();
     }
 }

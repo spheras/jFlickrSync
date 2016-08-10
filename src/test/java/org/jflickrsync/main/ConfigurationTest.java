@@ -21,6 +21,7 @@ public class ConfigurationTest
     public static void setup()
         throws IOException
     {
+        Configuration.resetConfiguration();
         configFolder = folder.newFolder( "configuration" );
         Configuration.getConfiguration( configFolder.getAbsolutePath() );
     }

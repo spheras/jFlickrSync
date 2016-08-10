@@ -340,6 +340,14 @@ public class Configuration
     }
 
     /**
+     * Reset the configuration and need to reload again. Util for testing
+     */
+    public static void resetConfiguration()
+    {
+        configuration = null;
+    }
+
+    /**
      * Obtain the configuration. This configuration is stored at the user home directory /.jflickrsync/config.properties
      * 
      * @return {@link Properties}

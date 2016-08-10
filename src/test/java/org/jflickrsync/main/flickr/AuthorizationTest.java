@@ -34,6 +34,7 @@ public class AuthorizationTest
     public static void setup()
         throws IOException
     {
+        Configuration.resetConfiguration();
         configFolder = folder.newFolder( "configuration" );
         Properties props = Configuration.getConfiguration( configFolder.getAbsolutePath() );
         props.setProperty( Configuration.CONFIG_ACCESSTOKEN, "" );

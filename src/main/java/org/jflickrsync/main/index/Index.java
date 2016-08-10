@@ -391,10 +391,85 @@ public class Index
     public synchronized void save()
         throws IOException
     {
-        // @TODO
         if ( this.storeFileNameIndex != null )
         {
             this.storeIndex( this.storeFileNameIndex );
+        }
+    }
+
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( obj instanceof Index )
+        {
+            Index index = (Index) obj;
+            if ( index.albums_size() == albums_size() )
+            {
+                for ( int i = 0; i < index.albums_size(); i++ )
+                {
+                    Album album1 = index.albums_get( i );
+                    int indexAlbum2 = albums_indexOf( album1 );
+                    if ( indexAlbum2 < 0 )
+                    {
+                        return false;
+                    }
+                    Album album2 = albums_get( indexAlbum2 );
+                    if ( !album1.equals( album2 ) )
+                    {
+                        return false;
+                    }
+                    if ( album1.getPhotos().size() != album2.getPhotos().size() )
+                    {
+                        return false;
+                    }
+                    for ( int j = 0; j < album1.getPhotos().size(); j++ )
+                    {
+                        Photo photo1 = album1.getPhotos().get( j );
+                        int indexPhoto2 = album2.getPhotos().indexOf( photo1 );
+                        if ( indexPhoto2 < 0 )
+                        {
+                            return false;
+                        }
+                        Photo photo2 = album2.getPhotos().get( indexPhoto2 );
+                        if ( !photo1.equals( photo2 ) )
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            if ( index.photoNoInAlbums_size() == photoNoInAlbums_size() )
+            {
+                for ( int i = 0; i < index.photoNoInAlbums_size(); i++ )
+                {
+                    Photo photo1 = index.photoNoInAlbums_get( i );
+                    int indexPhoto2 = photoNoInAlbums_indexOf( photo1 );
+                    if ( indexPhoto2 < 0 )
+                    {
+                        return false;
+                    }
+                    Photo photo2 = photoNoInAlbums_get( indexPhoto2 );
+                    if ( !photo1.equals( photo2 ) )
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
