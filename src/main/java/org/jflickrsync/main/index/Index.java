@@ -60,7 +60,7 @@ public class Index
     @Getter
     @Setter
     private String path = "";
-
+    
     /**
      * list of photos without set associated
      */

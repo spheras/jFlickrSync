@@ -87,7 +87,7 @@ public class LocalEventProcessor
      * 
      * @param fFolder {@link File}
      */
-    private synchronized void addPendingFolders( File fFolder )
+    synchronized void addPendingFolders( File fFolder )
     {
         this.pendingFolders.add( fFolder );
     }
@@ -96,7 +96,7 @@ public class LocalEventProcessor
      * Create a thread and wait for a period (seconds wait after the last event). After that it starts reviewing created
      * folders.
      */
-    private synchronized void waitToReviewFolders()
+    synchronized Thread waitToReviewFolders()
     {
         if ( this.waitThread == null )
         {
@@ -143,6 +143,7 @@ public class LocalEventProcessor
             };
             this.waitThread.start();
         }
+        return this.waitThread;
     }
 
     @Override
