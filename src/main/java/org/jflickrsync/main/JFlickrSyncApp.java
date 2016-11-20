@@ -103,7 +103,11 @@ public class JFlickrSyncApp
             do
             {
                 System.out.print( "Do you agree to start downloading/uploading images (Y/N)? " );
-                response = scanner.nextLine();
+                try{
+                    response = scanner.nextLine();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
             while ( !response.equalsIgnoreCase( "Y" ) && !response.equalsIgnoreCase( "N" ) );
             scanner.close();
